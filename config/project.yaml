@@ -1,0 +1,54 @@
+# Project settings used by the ETL, training, API, and scenario simulator.
+version: 1
+
+data:
+  raw_dir: data
+  processed_dir: artifacts/processed
+  flight_file: flight_data.xlsx
+  international_train_file: data international_train.xlsx
+  international_test_file: data international_test.xlsx
+  domestic_train_file: data domestic_train.xlsx
+  domestic_test_file: data domestic_test.xlsx
+  dictionary_file: Data_Dictionary.pdf
+
+split:
+  train_end: '2024-12-31'
+  validation_start: '2025-01-01'
+  validation_end: '2025-07-31'
+  official_test_start: '2025-08-01'
+  official_test_end: '2026-02-28'
+
+targets:
+  primary: monthly_hotel_new_arrivals
+  secondary: monthly_guest_days
+  forecast_grain: nationality_month
+
+model:
+  baseline: seasonal_naive
+  reference: regression
+  candidate: xgboost
+  selection_metric: wmape
+  random_seed: 42
+  air_elasticity_candidates: [0.25, 0.50, 0.75]
+  seat_smoothing: 100
+  capacity_ratio_clip: [0.5, 2.0]
+
+market_mapping:
+  method: versioned_assumption
+  unknown_bucket: OTHER_UNKNOWN
+  mapping_file: null  # Fill after the country-mapping audit.
+
+assumptions:
+  nonresident_visitor_share: 0.80 # Explicit unobserved prototype assumption.
+  hotel_capture_rate: null        # Calibrate effective capture from training data.
+  average_length_of_stay: null    # Estimate guest-day/arrival proxy from training data.
+  same_origin_nationality_share: 0.75 # Assumption, not measured in this pack.
+
+artifacts:
+  runs_dir: artifacts/runs
+  selected_model_file: artifacts/selected.json
+
+service:
+  api_host: 0.0.0.0
+  api_port: 8000
+  web_port: 8501

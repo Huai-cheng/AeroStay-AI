@@ -1,0 +1,35 @@
+# Competition datasets are licensed for challenge use only.
+data/*
+!data/README.md
+
+# Generated forecasts, trained models, reports, and local runs.
+artifacts/
+
+# Local environments and secrets.
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python caches and packaging output.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Local editor, OS, and logs.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

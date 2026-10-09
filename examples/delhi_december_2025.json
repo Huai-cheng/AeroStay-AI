@@ -1,0 +1,8 @@
+{
+  "month": "2025-12",
+  "departure_country": "India",
+  "departure_city": "Delhi",
+  "flights_per_week_delta": 2,
+  "seats_per_flight": 200,
+  "load_factor": 0.80
+}
