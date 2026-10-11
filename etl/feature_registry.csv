@@ -1,0 +1,42 @@
+feature_name,source,canonical_grain,forecast_availability,missing_policy,role,status,reason
+linear_time_trend_days,derived from hotel date,date-market,known,not missing,model,keep,current stable feature
+annual_seasonal_sine,derived from hotel date,date-market,known,not missing,model,keep,current stable feature
+annual_seasonal_cosine,derived from hotel date,date-market,known,not missing,model,keep,current stable feature
+weekend_indicator,derived from hotel date,date-market,known,not missing,model,keep,current stable feature
+month_category,requirement and hotel date,date-market,known,not missing,model,keep,required seasonality feature
+day_of_week_category,derived from hotel date,date-market,known,not missing,model,keep,current stable feature
+new_guest_arrivals,supplied hotel data,date-market,supplied in official test or scenario-generated,median plus missing indicator,model,keep,strong immediate demand signal
+same_day_guests,supplied hotel data,date-market,supplied in official test or scenario-generated,median plus missing indicator,model,keep,needed for overnight interpretation
+same_day_guests_missing_indicator,derived from hotel data,date-market,known,not missing,model,keep,preserves ambiguous suppression information
+previous_year_total_guests,derived from hotel history,date-market,historical lag,native missing plus indicator,model,keep,strong seasonal reference
+previous_year_new_arrivals,derived from hotel history,date-market,historical lag,native missing plus indicator,model,keep,historical arrival baseline
+year_over_year_arrival_ratio,derived from hotel history,date-market,current arrival must be supplied or scenario-generated,native missing,model,keep,current stable feature
+hotel_nationality_market,supplied hotel data,date-market,known,unknown category fallback,model,keep,international market identity
+domestic_international_segment,supplied dataset identity,date-market,known,not missing,model,keep,required by a single pooled estimator
+previous_year_same_day_guests,derived from hotel history,date-market,historical lag,native missing plus indicator,model,test,obtainable safe historical overnight-behavior signal
+total_scheduled_seats,requirement and flight data,month and origin,scheduled in advance,native missing plus coverage indicator,model and scenario,test,core supply lever after grain normalization
+average_weekly_flight_frequency,requirement and flight data,month and route,scheduled in advance,native missing plus coverage indicator,model and scenario,test,core route-frequency lever
+active_route_count,derived from flight data,month and origin,scheduled in advance,native missing plus coverage indicator,model and scenario,test,network breadth
+new_route_count,requirement and route history,month and origin,scheduled in advance,native missing plus coverage indicator,model and scenario,test,route-opening response
+discontinued_route_count,requirement and route history,month and origin,scheduled in advance,native missing plus coverage indicator,model and scenario,test,route-closure response
+passenger_load_factor,requirement and flight data,month and origin,scenario-generated or externally forecast,do not substitute realized future value,scenario and model test,test,use only with an honest future source
+point_to_point_passenger_share,derived from flight data,month and origin,scenario-generated or externally forecast,native missing,scenario and model test,test,separates destination traffic
+transfer_passenger_share,requirement and flight data,month and origin,scenario-generated or externally forecast,native missing,scenario and model test,test,required passenger-flow lever
+transit_passenger_share,requirement and flight data,month and origin,scenario-generated or externally forecast,native missing,scenario and model test,test,required passenger-flow lever
+departure_country_seat_share,requirement and flight data,month and origin,scheduled in advance,native missing,model and scenario,test,origin-market capacity mix
+departure_country_passenger_share,requirement and flight data,month and origin,scenario-generated or externally forecast,native missing,scenario and model test,test,origin passenger mix
+origin_market_seat_concentration,derived from flight data,month,scheduled in advance,native missing,model and scenario,test,market-mix concentration without false nationality matching
+year_over_year_seat_change,derived from flight data,month and origin,scheduled in advance,native missing,model,test,supply growth after common-grain normalization
+year_over_year_frequency_change,derived from flight data,month and origin,scheduled in advance,native missing,model,test,frequency growth after route-level aggregation
+major_event_indicator,requirement external calendar,date,known when event is scheduled,unknown until authoritative source joined,model,test_external,likely explains exceptional demand
+source_market_public_holiday_indicator,requirement external calendar,date and source market,known from official calendars,unknown until authoritative source joined,model,test_external,likely improves international timing
+ramadan_eid_indicator,external deterministic calendar,date,known,not missing after calendar join,model,test_external,important regional seasonal effect
+origin_to_nationality_mapping_confidence,required market bridge,month and origin-nationality,requires external or estimated mapping,explicit unknown confidence,model and scenario,test_external,prevents departure origin being treated as nationality
+average_length_of_stay,requirement but not supplied,scenario and market,user assumption,show range and uncertainty,scenario,assumption,converts guests to guest nights rather than serving as a current model feature
+aircraft_type,requirement but not supplied,route,unavailable,not applicable,model,drop,total seats and seats per flight are available proxies
+business_class_features,supplied but partial,month and route,partially available,native missing plus coverage indicator,model,drop_for_now,incomplete and redundant with total capacity without proven value
+economy_class_features,supplied but partial,month and route,partially available,native missing plus coverage indicator,model,drop_for_now,incomplete and redundant with total capacity without proven value
+first_class_features,supplied but partial,month and route,partially available,native missing plus coverage indicator,model,drop_for_now,sparse and redundant without proven value
+future_realized_passengers,flight operations,date and origin,not known at forecast origin,prohibited,model,drop,would create availability leakage
+future_realized_load_factor,flight operations,date and origin,not known at forecast origin,prohibited,model,drop,would create availability leakage
+

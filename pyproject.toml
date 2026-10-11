@@ -17,6 +17,7 @@ dependencies = [
   "pydantic==2.14.0",
   "PyYAML==6.0.3",
   "requests==2.34.2",
+  "SALib==1.6.0",
   "scikit-learn==1.9.1",
   "streamlit==1.65.0",
   "uvicorn==0.54.0",
@@ -26,8 +27,8 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest==9.1.1", "httpx==0.28.1"]
 
-[project.scripts]
-dtc = "dtc.cli:main"
+[tool.setuptools]
+packages = ["pipeline", "prototype", "etl"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]

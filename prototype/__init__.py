@@ -1,0 +1,2 @@
+"""Isolated DCT scenario prototype."""
+

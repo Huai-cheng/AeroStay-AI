@@ -1,0 +1,19 @@
+{
+  "selection_metric": "row-weighted WMAPE across two rolling chronological validation folds",
+  "test_period": [
+    "2024-08-01",
+    "2025-02-28"
+  ],
+  "experiment_count": 67,
+  "selected_schedule_safe_feature_definition": "Z3_frequency_plus_concentration",
+  "final_poisson_recommendation": "B0_current_baseline",
+  "finalists": [
+    "B0_current_baseline",
+    "L0_lean_core",
+    "S4_compact_scheduled",
+    "Z3_frequency_plus_concentration",
+    "R1_baseline_plus_scheduled_passenger_proxy"
+  ],
+  "random_state": 20261010,
+  "no_origin_to_nationality_exact_match": true
+}

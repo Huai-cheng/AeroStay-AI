@@ -5,3 +5,8 @@ data
 __pycache__
 .pytest_cache
 *.egg-info
+tmp
+archive
+docs
+frontend
+tests

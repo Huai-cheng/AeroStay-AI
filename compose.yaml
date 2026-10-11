@@ -1,21 +1,19 @@
 services:
   api:
     build: .
-    command: uvicorn dtc.api:app --host 0.0.0.0 --port 8000
-    environment:
-      DTC_CONFIG: /app/config/project.yaml
+    command: sh -c "python -m prototype.train_models && uvicorn prototype.api:app --host 0.0.0.0 --port 8000"
     ports:
       - "8000:8000"
     volumes:
       - ./data:/app/data:ro
       - ./artifacts:/app/artifacts
-      - ./config:/app/config:ro
   web:
     build: .
-    command: streamlit run src/dtc/web.py --server.address 0.0.0.0 --server.port 8501
-    environment:
-      DTC_API_URL: http://api:8000
+    command: sh -c "until [ -f /app/artifacts/selected_model/pooled_poisson_xgboost.joblib ]; do sleep 2; done; streamlit run prototype/app.py --server.address 0.0.0.0 --server.port 8501"
     ports:
       - "8501:8501"
     depends_on:
       - api
+    volumes:
+      - ./data:/app/data:ro
+      - ./artifacts:/app/artifacts

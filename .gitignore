@@ -4,6 +4,8 @@ data/*
 
 # Generated forecasts, trained models, reports, and local runs.
 artifacts/
+tmp/
+archive/notes/
 
 # Local environments and secrets.
 .venv/
@@ -33,3 +35,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# Frontend dependency and build output (the nested ignore file mirrors this).
+frontend/node_modules/
+frontend/.next/

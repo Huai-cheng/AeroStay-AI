@@ -1,0 +1,10 @@
+{
+  "baseline_wmape": 0.12987056895089735,
+  "challenger_wmape": 0.13101777535195452,
+  "challenger_minus_baseline": 0.0011472064010571714,
+  "cluster_bootstrap_95pct_low": 0.00018997028686437711,
+  "cluster_bootstrap_95pct_high": 0.002210550417306223,
+  "probability_challenger_better": 0.00605,
+  "month_clusters": 7,
+  "bootstrap_samples": 20000
+}
