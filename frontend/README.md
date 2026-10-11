@@ -46,18 +46,40 @@ Invoke-RestMethod http://127.0.0.1:8000/sensitivity -Method Post -ContentType 'a
 Invoke-RestMethod http://127.0.0.1:8000/global-sensitivity -Method Post -ContentType 'application/json' -Body $body
 ```
 
-## What the UI is designed to prove
+## Structure
 
-- The opening is a scroll-controlled, four-chapter journey from aircraft to arrivals to hotel to decision. See [STORYBOARD.md](STORYBOARD.md) for the visual sequence and asset prompts.
-- Existing routes use origin-specific observed baselines.
-- Proposed routes are visibly labelled as analog estimates and receive a wider planning range.
-- The six-stage conversion chain separates observed values, assumptions, and model output.
-- The stress test reruns the full model path for each perturbation.
-- The opt-in SALib Morris panel varies all levers together and separates overall
-  influence (`mu_star`) from interaction/non-linearity (`sigma`).
-- Model choice, chronological holdout, WMAPE, feature groups, and non-causal limitations stay visible to judges.
+- `/` has two full-screen sections. On desktop they snap: a small scroll moves
+  between the landing and the simulator. On narrow screens they stack normally.
+  - **Landing:** a dot-matrix world map (Natural Earth 1:50m, projection
+    centred on Abu Dhabi). Every served origin is drawn as a great-circle route
+    from its main gateway city, and the selected origin country is highlighted.
+    Aircraft depart at a rate that grows with the scenario's weekly flights.
+    Each landing releases passengers split into hotel guests, other arrivals
+    and onward connections, in the proportions the API's conversion chain
+    returns. The map re-frames itself so the selected route never sits under
+    the headline. It also shows the live headline result.
+  - The map dots come from `src/lib/world-dots.json`; rebuild that file with
+    `node scripts/build-world-dots.mjs`.
+  - **Simulator:** a scrollable control sidebar and a results view. Results
+    update automatically about 0.2 s after any change; stale requests are
+    cancelled. The views are the headline change, the conversion funnel, the
+    monthly change, and quick or full (SALib Morris) sensitivity.
+- `/how-it-works` holds the scroll story (see [STORYBOARD.md](STORYBOARD.md)),
+  the conversion chain, the model, live back-test metrics, the sensitivity
+  methods and the limitations.
 
-The visual sequence uses illustrative imagery and accessible HTML. Exact analytical quantities remain in the live result and ECharts panels.
+## Accuracy notes
+
+- Every number shown comes from the API response; the page never recalculates
+  model outputs.
+- The planning range from `/simulate` covers **all Abu Dhabi hotels**, and is
+  labelled that way.
+- The monthly chart shows scenario minus baseline guest nights for all hotels.
+  Only the selected nationality's arrivals change, so this equals the selected
+  market's change.
+
+The route map and skyline are illustrative. Exact quantities are in the result
+panels.
 
 ## Dashboard parity requirement
 
