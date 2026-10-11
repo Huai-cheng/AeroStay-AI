@@ -82,6 +82,12 @@ export type SimulationPayload = {
   planning_range_low: number;
   planning_range_high: number;
   scenario_load_factor: number;
+  allocated_arrival_delta: number;
+  seats_per_flight_change_pct: number;
+  load_factor_change_points: number;
+  new_route_weekly_flights: number;
+  new_route_seats_per_flight: number;
+  new_route_load_factor: number;
   transfer_share: number;
   transit_share: number;
   visitor_share: number;
