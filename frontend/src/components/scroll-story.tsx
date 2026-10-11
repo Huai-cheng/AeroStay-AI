@@ -1,44 +1,52 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
-import { ArrowDown, ArrowRight, Plane } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 
-import type { SimulationPayload } from "@/lib/types";
+const CHAPTERS = [
+  {
+    title: <>When a new flight lands, <em>where does demand go?</em></>,
+    body: "Follow one change in flight capacity through arrivals, visitors and hotel stays.",
+    equation: null,
+  },
+  {
+    title: <>Every seat starts a journey. <em>Not every passenger stays.</em></>,
+    body: "Flights and load factor set how many passengers arrive. Transfer and transit passengers continue elsewhere.",
+    equation: ["Seats", "×", "Load factor", "−", "Transfers and transit"],
+  },
+  {
+    title: <>Visitors reach the city. <em>Some choose a hotel.</em></>,
+    body: "Visitor share and hotel capture are visible assumptions. You can change both in the simulator.",
+    equation: ["Arrivals", "×", "Visitor share", "×", "Hotel capture"],
+  },
+  {
+    title: <>Then the model <em>turns it into guest nights.</em></>,
+    body: "A gradient-boosted model, back-tested on held-out months, estimates hotel guests by nationality and by day.",
+    equation: null,
+  },
+];
 
-const count = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
-
-type ScrollStoryProps = {
-  origin: string;
-  market: string;
-  result: SimulationPayload | null;
-};
-
-export function ScrollStory({ origin, market, result }: ScrollStoryProps) {
+export function ScrollStory() {
   const storyRef = useRef<HTMLElement>(null);
   const [chapter, setChapter] = useState(0);
-  const { scrollYProgress } = useScroll({
-    target: storyRef,
-    offset: ["start start", "end end"],
-  });
+  const { scrollYProgress } = useScroll({ target: storyRef, offset: ["start start", "end end"] });
 
   const approachOpacity = useTransform(scrollYProgress, [0, 0.18, 0.32], [1, 1, 0]);
   const arrivalsOpacity = useTransform(scrollYProgress, [0.21, 0.32, 0.48, 0.58], [0, 1, 1, 0]);
   const hotelOpacity = useTransform(scrollYProgress, [0.52, 0.64, 1], [0, 1, 1]);
-  const approachScale = useTransform(scrollYProgress, [0, 0.33], [1, 1.13]);
+  const approachScale = useTransform(scrollYProgress, [0, 0.33], [1, 1.12]);
   const arrivalsScale = useTransform(scrollYProgress, [0.24, 0.67], [1.08, 1]);
   const hotelScale = useTransform(scrollYProgress, [0.55, 1], [1.1, 1]);
-  const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  useMotionValueEvent(scrollYProgress, "change", (progress) => {
-    const next = progress < 0.24 ? 0 : progress < 0.55 ? 1 : progress < 0.82 ? 2 : 3;
-    setChapter((previous) => previous === next ? previous : next);
+  const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    const next = value < 0.24 ? 0 : value < 0.55 ? 1 : value < 0.82 ? 2 : 3;
+    setChapter((previous) => (previous === next ? previous : next));
   });
-  const selectedLift = result
-    ? result.selected_market_scenario_nights - result.selected_market_baseline_nights
-    : null;
 
   return (
-    <section className="scroll-story" ref={storyRef} aria-label="Flight to hotel demand story">
+    <section className="story" ref={storyRef} aria-label="From flight to hotel night">
       <div className="story-sticky">
         <div className="story-media" aria-hidden="true">
           <motion.div className="story-image" style={{ opacity: approachOpacity, scale: approachScale, backgroundImage: "url('/story/approach.webp')" }} />
@@ -47,45 +55,22 @@ export function ScrollStory({ origin, market, result }: ScrollStoryProps) {
           <div className="story-vignette" />
         </div>
 
-        <div className="story-topline">
-          <span><Plane size={16} /> ABU DHABI / DECISION INTELLIGENCE</span>
-        </div>
-
-        <div className={`story-chapter story-chapter-one ${chapter === 0 ? "active" : ""}`} aria-hidden={chapter !== 0}>
-          <div className="story-kicker"><i /> 01 / THE QUESTION</div>
-          <h1>When a new flight lands, <em>where does demand go?</em></h1>
-          <p>Follow an aviation change through arrivals, visitors, and hotel demand. Then test the numbers yourself.</p>
-          <a className="story-cta" href="#scenario">Open the planner <ArrowRight size={18} /></a>
-        </div>
-
-        <div className={`story-chapter story-chapter-two ${chapter === 1 ? "active" : ""}`} aria-hidden={chapter !== 1}>
-          <div className="story-kicker"><i /> 02 / THE ARRIVALS</div>
-          <h2>Every seat begins a journey. <em>Not every passenger stays.</em></h2>
-          <p>Flights and load factor set arriving passenger volume. Transfer and transit travellers branch away before destination demand is estimated.</p>
-          <div className="story-equation"><span>Seats</span><b>×</b><span>Load factor</span><b>−</b><span>Transfers + transit</span></div>
-        </div>
-
-        <div className={`story-chapter story-chapter-three ${chapter === 2 ? "active" : ""}`} aria-hidden={chapter !== 2}>
-          <div className="story-kicker"><i /> 03 / THE CITY</div>
-          <h2>Visitors reach the city. <em>Some become hotel guests.</em></h2>
-          <p>Visitor share and hotel capture are visible planning assumptions. Change either one in the live studio and see the result move.</p>
-          <div className="story-equation"><span>Destination passengers</span><b>×</b><span>Visitor share</span><b>×</b><span>Hotel capture</span></div>
-        </div>
-
-        <div className={`story-chapter story-chapter-four ${chapter === 3 ? "active" : ""}`} aria-hidden={chapter !== 3}>
-          <div className="story-kicker"><i /> 04 / THE DECISION</div>
-          <h2>Turn the journey <em>into a decision.</em></h2>
-          <p>Pooled Poisson XGBoost estimates hotel guests by market and season. The scenario engine shows what changes, why, and which assumptions matter most.</p>
-          <div className="story-live-result">
-            <span>{origin} → Abu Dhabi · {market} hotel market</span>
-            <strong>{selectedLift === null ? "Run a live case" : `${selectedLift >= 0 ? "+" : ""}${count.format(selectedLift)}`}</strong>
-            <small>{selectedLift === null ? "The planner is loading" : "Estimated change in guest nights for the selected market"}</small>
+        {CHAPTERS.map((item, index) => (
+          <div key={index} className={`story-chapter ${chapter === index ? "active" : ""}`} aria-hidden={chapter !== index}>
+            <p className="story-step">{index + 1} of 4</p>
+            {index === 0 ? <h1>{item.title}</h1> : <h2>{item.title}</h2>}
+            <p>{item.body}</p>
+            {item.equation && (
+              <div className="story-equation">
+                {item.equation.map((part, partIndex) => (partIndex % 2 ? <b key={partIndex}>{part}</b> : <span key={partIndex}>{part}</span>))}
+              </div>
+            )}
+            {index === 3 && <Link className="button primary" href="/#simulator">Try it in the simulator <ArrowRight size={17} /></Link>}
           </div>
-          <a className="story-cta" href="#scenario">Challenge the forecast <ArrowRight size={18} /></a>
-        </div>
+        ))}
 
-        <div className="story-progress" aria-hidden="true"><motion.i style={{ scaleY: progressScale }} /></div>
-        <div className="story-footer"><span>{chapter === 3 ? "Continue to the live planner" : "Illustrative journey · scroll to explore"}</span><ArrowDown size={17} /><span>0{chapter + 1} / 04</span></div>
+        <div className="story-progress" aria-hidden="true"><motion.i style={{ scaleY: progress }} /></div>
+        <div className="story-footer"><span>{chapter === 3 ? "Keep scrolling for the method" : "Illustrative images · scroll to continue"}</span><ArrowDown size={15} /></div>
       </div>
     </section>
   );
