@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from functools import lru_cache
 import json
+import os
 from typing import Any
 
+import joblib
 import numpy as np
 import pandas as pd
 from SALib.analyze import morris as morris_analyze
@@ -47,8 +49,23 @@ SCENARIO_CONTROL_KEYS = [
 ]
 
 
+# Optional pre-built copy of application_state(). Deployments write it at build
+# time so a cold serverless instance skips re-parsing the workbooks.
+STATE_SNAPSHOT = ARTIFACT_DIR / "application_state.joblib"
+
+
 @lru_cache(maxsize=1)
 def application_state() -> dict[str, Any]:
+    if os.environ.get("AEROSTAY_USE_STATE_SNAPSHOT") == "1" and STATE_SNAPSHOT.exists():
+        return joblib.load(STATE_SNAPSHOT)
+    return build_application_state()
+
+
+def write_state_snapshot() -> None:
+    joblib.dump(build_application_state(), STATE_SNAPSHOT)
+
+
+def build_application_state() -> dict[str, Any]:
     train, test = load_hotel_data()
     flights = load_flights()
     model = load_model()

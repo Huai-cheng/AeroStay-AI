@@ -39,3 +39,6 @@ Thumbs.db
 # Frontend dependency and build output (the nested ignore file mirrors this).
 frontend/node_modules/
 frontend/.next/
+
+# Vercel CLI project link.
+.vercel/

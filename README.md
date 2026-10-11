@@ -53,7 +53,7 @@ see [`UI_SCENARIO_PARITY.md`](UI_SCENARIO_PARITY.md).
 
 Prerequisites:
 
-- Python 3.11 or newer (Python 3.12 was used for verification);
+- Python 3.12 or newer (the pinned NumPy release requires it);
 - `pip` with network access for the first dependency installation;
 - the five licensed workbooks described in [`data/README.md`](data/README.md);
 - Node.js 20.9 or newer and npm only if running the Next.js dashboard;
@@ -63,7 +63,7 @@ Install the locked Python dependencies and train the model:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m pip install -e ".[dashboard,test]"
 .\.venv\Scripts\python.exe -m prototype.train_models
 ```
 
@@ -97,6 +97,29 @@ Set-Location frontend
 npm run lint
 npm run build
 ```
+
+## Deploy (Vercel)
+
+Pushes to `main` deploy two Vercel projects from this repository:
+
+| Project | Root | URL |
+| --- | --- | --- |
+| `aerostay-api` | repository root (FastAPI, `prototype.api:app`) | <https://aerostay-api.vercel.app> |
+| `aerostay-web` | `frontend/` (Next.js) | <https://aerostay-web.vercel.app> |
+
+The licensed workbooks and trained model are not in Git. The API build
+(`python -m prototype.fetch_blob_assets`) downloads them from a private Vercel
+Blob store under `aerostay/data/` and `aerostay/selected_model/`, then writes a
+pre-built application-state snapshot so cold starts skip workbook parsing.
+After retraining, re-upload the changed files, for example:
+
+```bash
+vercel blob put artifacts/selected_model/pooled_poisson_xgboost.joblib --access private --pathname aerostay/selected_model/pooled_poisson_xgboost.joblib --allow-overwrite true
+```
+
+Project environment variables: `aerostay-web` sets `NEXT_PUBLIC_API_URL`;
+`aerostay-api` sets `AEROSTAY_CORS_ORIGINS` (allowed dashboard origins),
+`AEROSTAY_USE_STATE_SNAPSHOT=1`, and the Blob store's `BLOB_READ_WRITE_TOKEN`.
 
 ## What is intentionally not committed
 

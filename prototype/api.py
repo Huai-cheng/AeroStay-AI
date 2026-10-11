@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+import os
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException
@@ -47,7 +48,9 @@ app = FastAPI(
 )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    # Deployments add their dashboard origin(s) as a comma-separated list.
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"]
+    + [origin.strip() for origin in os.environ.get("AEROSTAY_CORS_ORIGINS", "").split(",") if origin.strip()],
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],

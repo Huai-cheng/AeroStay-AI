@@ -1,0 +1,10 @@
+# Licensed data and trained models come from private Blob at build time.
+data/
+artifacts/
+.venv/
+archive/
+docs/
+tests/
+**/__pycache__/
+.pytest_cache/
+*.egg-info/

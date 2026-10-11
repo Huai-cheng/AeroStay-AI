@@ -6,25 +6,28 @@ build-backend = "setuptools.build_meta"
 name = "dtc-air-hotel"
 version = "0.1.0"
 description = "Explainable Abu Dhabi air-to-hotel scenario simulator"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
   "fastapi==0.143.0",
   "joblib==1.6.0",
   "numpy==2.5.3",
   "openpyxl==3.1.5",
   "pandas==2.3.3",
-  "plotly==6.9.0",
   "pydantic==2.14.0",
   "PyYAML==6.0.3",
   "requests==2.34.2",
   "SALib==1.6.0",
   "scikit-learn==1.9.1",
-  "streamlit==1.65.0",
   "uvicorn==0.54.0",
-  "xgboost==3.4.1",
+  # Same library and version; the -cpu build skips the ~300 MB GPU NCCL
+  # runtime that plain xgboost pulls in on Linux (Vercel, Docker).
+  "xgboost==3.4.1; sys_platform != 'linux'",
+  "xgboost-cpu==3.4.1; sys_platform == 'linux'",
 ]
 
 [project.optional-dependencies]
+# Streamlit dashboard only; the API deployment does not need it.
+dashboard = ["plotly==6.9.0", "streamlit==1.65.0"]
 test = ["pytest==9.1.1", "httpx==0.28.1"]
 
 [tool.setuptools]
@@ -32,3 +35,9 @@ packages = ["pipeline", "prototype", "etl"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.vercel]
+entrypoint = "prototype.api:app"
+
+[tool.vercel.scripts]
+build = "python -m prototype.fetch_blob_assets"
