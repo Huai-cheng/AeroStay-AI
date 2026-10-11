@@ -334,8 +334,14 @@ def sensitivity(payload: dict[str, Any]) -> dict[str, Any]:
         if mode == "New route"
         else float(payload.get("load_factor_change_points", 0.0))
     )
-    load_factor_low = max(0.0, load_factor_base - (0.05 if mode == "New route" else 5.0))
-    load_factor_high = min(1.25, load_factor_base + (0.05 if mode == "New route" else 5.0))
+    # New routes perturb an absolute load factor; existing routes perturb a change
+    # in percentage points, which may be negative (scenario_chain clips the result).
+    if mode == "New route":
+        load_factor_low = max(0.0, load_factor_base - 0.05)
+        load_factor_high = min(1.25, load_factor_base + 0.05)
+    else:
+        load_factor_low = load_factor_base - 5.0
+        load_factor_high = load_factor_base + 5.0
     cases = [
         ("Weekly flights", weekly_key, max(0.0, weekly_value - 2.0), weekly_value + 2.0, "±2 flights/week"),
         ("Load factor", load_factor_key, load_factor_low, load_factor_high, "±5 percentage points"),

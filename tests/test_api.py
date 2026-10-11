@@ -82,6 +82,9 @@ def test_sensitivity_returns_ranked_complete_model_reruns():
     assert len(payload["drivers"]) == 4
     swings = [driver["swing"] for driver in payload["drivers"]]
     assert swings == sorted(swings, reverse=True)
+    # Existing-route load factor is a change in points, so -5 must lower demand.
+    load_factor = next(d for d in payload["drivers"] if d["driver"] == "Load factor")
+    assert load_factor["downside"] < 0 < load_factor["upside"]
 
 
 def test_global_sensitivity_endpoint(monkeypatch):
