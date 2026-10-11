@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Noto_Kufi_Arabic } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,18 +12,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const kufi = Noto_Kufi_Arabic({
+  variable: "--font-arabic",
+  subsets: ["arabic"],
+  weight: ["400", "500"],
+});
+
 export const metadata: Metadata = {
-  title: "AeroStay Intelligence | DCT Abu Dhabi",
-  description: "Explainable flight-to-hotel scenario intelligence for Abu Dhabi.",
+  title: "AeroStay | Abu Dhabi hotel demand simulator",
+  description: "See how changes to flights into Abu Dhabi change hotel guest nights, by country and by month.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#070708",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${kufi.variable} antialiased`}>
+      <body>{children}</body>
     </html>
   );
 }
