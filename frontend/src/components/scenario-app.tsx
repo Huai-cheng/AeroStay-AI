@@ -64,7 +64,7 @@ function Landing({ scenario, flow, weeklyFlights }: { scenario: ScenarioState; f
       <div className="landing-fade" aria-hidden="true" />
       <header className="landing-nav">
         <Logo />
-        <Link href="/how-it-works" className="nav-link">How it works</Link>
+        <HelpLink />
       </header>
 
       <div className="landing-copy">
@@ -73,7 +73,7 @@ function Landing({ scenario, flow, weeklyFlights }: { scenario: ScenarioState; f
         <p className="lede">Change a route, a schedule or an aircraft, and watch hotel guest numbers in Abu Dhabi respond by country and by month.</p>
 
         <div className="landing-live" aria-live="polite">
-          <span className="live-label"><i aria-hidden="true" />Live from the model</span>
+          <span className="live-label">Live estimate from the model</span>
           {result ? (
             <>
               <strong className="tabular"><AnimatedNumber value={marketLift(result)} format={(value) => signed(value)} /> <small>guest nights</small></strong>
@@ -116,7 +116,7 @@ function Simulator({ scenario, flow, weeklyFlights }: { scenario: ScenarioState;
           {result && <><AnimatedNumber value={lift} format={(value) => signed(value)} /><small>nights</small></>}
         </div>
         <nav className="app-nav">
-          <Link href="/how-it-works" className="nav-link">How it works</Link>
+          <HelpLink />
           <button className="icon-button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Back to the top"><ArrowUp size={16} /></button>
         </nav>
       </header>
@@ -171,6 +171,15 @@ function Simulator({ scenario, flow, weeklyFlights }: { scenario: ScenarioState;
         )}
       </main>
     </section>
+  );
+}
+
+function HelpLink() {
+  return (
+    <Link href="/how-it-works" className="help-link" aria-label="How it works: method, model and limitations">
+      <span className="help-icon" aria-hidden="true">?</span>
+      <span className="help-text">How it works</span>
+    </Link>
   );
 }
 
@@ -257,12 +266,12 @@ function Controls({ scenario }: { scenario: ScenarioState }) {
         />
         {isNew ? (
           <>
-            <Slider label="Seats per flight" hint="Aircraft size for the new service" value={form.seatsPerFlight} min={50} max={600} step={10} display={String(form.seatsPerFlight)} onChange={(seatsPerFlight) => update({ ...form, seatsPerFlight })} />
-            <Slider label="Expected load factor" hint="Share of seats filled" value={Math.round(form.newRouteLoadFactor * 100)} min={30} max={100} display={percent(form.newRouteLoadFactor)} onChange={(value) => update({ ...form, newRouteLoadFactor: value / 100 })} />
+            <Slider label="Seats per flight" value={form.seatsPerFlight} min={50} max={600} step={10} display={String(form.seatsPerFlight)} onChange={(seatsPerFlight) => update({ ...form, seatsPerFlight })} />
+            <Slider label="Expected load factor" value={Math.round(form.newRouteLoadFactor * 100)} min={30} max={100} display={percent(form.newRouteLoadFactor)} onChange={(value) => update({ ...form, newRouteLoadFactor: value / 100 })} />
           </>
         ) : (
           <>
-            <Slider label="Seats per flight" hint="Larger or smaller aircraft than today" value={form.seatsPerFlightChange} min={-40} max={60} step={5} baseline={0} baselineLabel="Today" display={`${form.seatsPerFlightChange > 0 ? "+" : ""}${form.seatsPerFlightChange}%`} onChange={(seatsPerFlightChange) => update({ ...form, seatsPerFlightChange })} />
+            <Slider label="Seats per flight" value={form.seatsPerFlightChange} min={-40} max={60} step={5} baseline={0} baselineLabel="Today" display={`${form.seatsPerFlightChange > 0 ? "+" : ""}${form.seatsPerFlightChange}%`} onChange={(seatsPerFlightChange) => update({ ...form, seatsPerFlightChange })} />
             <Slider label="Load factor" hint={`Today ${percent(route?.load_factor ?? 0)} of seats are filled`} value={form.loadFactorPoints} min={-20} max={20} baseline={0} baselineLabel="Today" display={`${form.loadFactorPoints > 0 ? "+" : ""}${form.loadFactorPoints} pts`} onChange={(loadFactorPoints) => update({ ...form, loadFactorPoints })} />
           </>
         )}

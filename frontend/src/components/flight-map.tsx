@@ -62,7 +62,7 @@ function lonLat(key: string): [number, number] | null {
 
 function fonts() {
   const root = getComputedStyle(document.documentElement);
-  const sans = root.getPropertyValue("--font-geist-sans").trim() || "system-ui, sans-serif";
+  const sans = root.getPropertyValue("--font-sans").trim() || "system-ui, sans-serif";
   const arabic = root.getPropertyValue("--font-arabic").trim() || "sans-serif";
   return { sans, arabic };
 }
@@ -292,8 +292,6 @@ export function FlightMap({ variant, origins, weeklyFlights, selected, flow, cla
         gradient.addColorStop(0, `rgba(${GOLD},0.35)`);
         gradient.addColorStop(1, `rgba(${GOLD},0.9)`);
         g.save();
-        g.shadowColor = `rgba(${GOLD},0.6)`;
-        g.shadowBlur = 8;
         g.strokeStyle = gradient;
         g.lineWidth = 1.5;
         g.setLineDash([]);
@@ -327,7 +325,7 @@ export function FlightMap({ variant, origins, weeklyFlights, selected, flow, cla
       // Abu Dhabi marker: eight-point star.
       const [ax, ay] = projection(AUH)!;
       const glow = g.createRadialGradient(ax, ay, 0, ax, ay, 40);
-      glow.addColorStop(0, `rgba(${GOLD},0.28)`);
+      glow.addColorStop(0, `rgba(${GOLD},0.12)`);
       glow.addColorStop(1, `rgba(${GOLD},0)`);
       g.fillStyle = glow;
       g.beginPath();
@@ -389,16 +387,12 @@ export function FlightMap({ variant, origins, weeklyFlights, selected, flow, cla
       }
     };
 
-    const drawPlane = (x: number, y: number, heading: number, size: number, alpha: number, glow: boolean) => {
+    const drawPlane = (x: number, y: number, heading: number, size: number, alpha: number) => {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(heading);
       ctx.scale(size / 24, size / 24);
       ctx.translate(-11.5, -12);
-      if (glow) {
-        ctx.shadowColor = `rgba(${GOLD},0.8)`;
-        ctx.shadowBlur = 10;
-      }
       ctx.fillStyle = `rgba(${WHITE},${alpha})`;
       ctx.fill(plane);
       ctx.restore();
@@ -481,7 +475,7 @@ export function FlightMap({ variant, origins, weeklyFlights, selected, flow, cla
           }
         }
         const fade = Math.min(1, item.t * 10, (1 - item.t) * 12);
-        drawPlane(x, y, heading, item.ambient ? 9 : kind === "hero" ? 15 : 13, item.ambient ? 0.32 * fade : fade, !item.ambient);
+        drawPlane(x, y, heading, item.ambient ? 9 : kind === "hero" ? 15 : 13, item.ambient ? 0.32 * fade : fade);
         survivors.push(item);
       }
       planes = survivors;
